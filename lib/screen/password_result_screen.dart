@@ -26,7 +26,7 @@ class PasswordResultScreen extends StatelessWidget {
             ),
             Text(
               passwordResultData.join(''),
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
             ),
           ],
         ),

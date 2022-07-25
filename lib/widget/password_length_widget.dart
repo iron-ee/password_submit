@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 
 class PasswordLengthWidget extends StatefulWidget {
   final List<String> passwordInputData;
-  final int inputLength;
   const PasswordLengthWidget({
     Key? key,
     required this.passwordInputData,
-    required this.inputLength,
   }) : super(key: key);
 
   @override
@@ -23,40 +21,51 @@ class _PasswordLengthWidgetState extends State<PasswordLengthWidget> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Row(
-              children: [
-                for (int i = 0; i < widget.inputLength; i++)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            Row(
-              children: widget.passwordInputData
-                  .map((e) => Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ))
-                  .toList(),
-            ),
+            /// 6자리 회색 동그라미 로우 위젯
+            grayCircleRowWidget(),
+
+            /// 입력 표시 검은색 동그라미 로우 위젯
+            blackCircleRowWidget(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget grayCircleRowWidget() {
+    return Row(
+      children: [
+        for (int i = 0; i < 6; i++)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget blackCircleRowWidget() {
+    return Row(
+      children: widget.passwordInputData
+          .map((e) => Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ))
+          .toList(),
     );
   }
 }

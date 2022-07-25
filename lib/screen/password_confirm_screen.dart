@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:password_submit/data/password_data_controller.dart';
@@ -23,13 +21,8 @@ class _PasswordConfirmScreenState extends State<PasswordConfirmScreen> {
   String title = '한번 더 입력해주세요.';
   String failTitle = '불일치 합니다. 다시 입력해주세요.';
 
-  String num = '0123456789';
-  String randomValue = '';
-  String keyPadValue = '';
-
   @override
   void initState() {
-    initKeyPadNum();
     listener();
     super.initState();
   }
@@ -43,17 +36,6 @@ class _PasswordConfirmScreenState extends State<PasswordConfirmScreen> {
   void listener() {
     passwordDataController.setContext(context);
     passwordDataController.passwordConfirmListener();
-  }
-
-  void initKeyPadNum() {
-    for (int i = 0; randomValue.length < 10; i++) {
-      int rand = math.Random().nextInt(10);
-
-      if (randomValue.contains(rand.toString())) continue;
-      randomValue += num.substring(rand, rand + 1);
-    }
-
-    keyPadValue = '${randomValue.substring(0, 9)}@${randomValue.substring(9)}';
   }
 
   @override
@@ -78,13 +60,15 @@ class _PasswordConfirmScreenState extends State<PasswordConfirmScreen> {
                     child: Text(
                         passwordDataController.passwordInputData.toString()),
                   ),
+
+                  /// 패스워드 입력 길이 로우 위젯
                   PasswordLengthWidget(
                     passwordInputData: passwordDataController.passwordInputData,
-                    inputLength: 6,
                   ),
+
+                  /// 랜덤 키패드 위젯
                   KeyPadWidget(
                     passwordInputData: passwordDataController.passwordInputData,
-                    keyValue: keyPadValue,
                   ),
                 ],
               ),
