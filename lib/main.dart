@@ -1,14 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:password_submit/data/password_data_controller.dart';
 import 'package:password_submit/screen/password_add_screen.dart';
 import 'package:password_submit/screen/password_confirm_screen.dart';
 import 'package:password_submit/screen/password_result_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const PasswordApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class PasswordApp extends StatefulWidget {
+  const PasswordApp({Key? key}) : super(key: key);
+
+  @override
+  State<PasswordApp> createState() => _PasswordAppState();
+}
+
+class _PasswordAppState extends State<PasswordApp> with WidgetsBindingObserver {
+  PasswordDataController passwordDataController =
+      Get.put(PasswordDataController());
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (!passwordDataController.isComplete.value) {
+          passwordDataController.resumedResetData();
+        }
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,14 +60,12 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: const PasswordAddScreen(),
-      initialRoute: '/add',
       routes: {
         '/add': (context) => const PasswordAddScreen(),
       },
       onGenerateRoute: (value) {
         if (value.name == '/confirm') {
           final dynamic args = value.arguments;
-          print('$args');
           return MaterialPageRoute(builder: (context) {
             return PasswordConfirmScreen(
               passwordAddData: args[0],

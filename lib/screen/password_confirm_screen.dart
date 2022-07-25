@@ -20,43 +20,40 @@ class PasswordConfirmScreen extends StatefulWidget {
 class _PasswordConfirmScreenState extends State<PasswordConfirmScreen> {
   PasswordDataController passwordDataController = Get.find();
 
-  List<int> numContainer = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-  String passwordNum = '0123456789';
-  String keyValue = '';
-  String keyValueResult = '';
-
   String title = '한번 더 입력해주세요.';
+  String failTitle = '불일치 합니다. 다시 입력해주세요.';
+
+  String num = '0123456789';
+  String randomValue = '';
+  String keyPadValue = '';
 
   @override
   void initState() {
-    // passwordDataController.passwordInputData.clear();
     initKeyPadNum();
-
-    print('widget passwordAddData : ${widget.passwordAddData}');
-    // print('passwordResult : ${passwordDataController.passwordResult}');
+    listener();
     super.initState();
   }
 
-  void initKeyPadNum() {
-    for (int i = 0; keyValue.length < 10; i++) {
-      int rand = math.Random().nextInt(10);
-      // print('rand : $rand');
+  @override
+  void dispose() {
+    passwordDataController.passwordConfirmCancel();
+    super.dispose();
+  }
 
-      if (keyValue.contains(rand.toString())) continue;
-      keyValue += passwordNum.substring(rand, rand + 1);
-      // print(keyValue);
+  void listener() {
+    passwordDataController.setContext(context);
+    passwordDataController.passwordConfirmListener();
+  }
+
+  void initKeyPadNum() {
+    for (int i = 0; randomValue.length < 10; i++) {
+      int rand = math.Random().nextInt(10);
+
+      if (randomValue.contains(rand.toString())) continue;
+      randomValue += num.substring(rand, rand + 1);
     }
 
-    keyValueResult = '${keyValue.substring(0, 9)}@${keyValue.substring(9)}';
-    print('keyValueResult : $keyValueResult');
-
-    // int counter = -1;
-    // while (counter < 9) {
-    //   counter++;
-    //   // String password = keyValue[counter];
-    //   // print('password : ${keyValue[counter]}');
-    // }
+    keyPadValue = '${randomValue.substring(0, 9)}@${randomValue.substring(9)}';
   }
 
   @override
@@ -68,21 +65,16 @@ class _PasswordConfirmScreenState extends State<PasswordConfirmScreen> {
           child: Scaffold(
             backgroundColor: Colors.white,
             body: Padding(
-              padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
               child: Column(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                  backSpaceWidget(context),
+                  const SizedBox(
+                    height: 20,
                   ),
-                  // Text('${keyValue}'),
-                  Center(
+                  titleWidget(),
+                  SizedBox(
+                    height: 0,
                     child: Text(
                         passwordDataController.passwordInputData.toString()),
                   ),
@@ -92,16 +84,45 @@ class _PasswordConfirmScreenState extends State<PasswordConfirmScreen> {
                   ),
                   KeyPadWidget(
                     passwordInputData: passwordDataController.passwordInputData,
-                    passwordResult: passwordDataController.passwordResult,
-                    keyValueResult: keyValueResult,
-                    // complete: () {
-                    //   passwordDataController.passwordInputData.clear();
-                    // },
+                    keyValue: keyPadValue,
                   ),
                 ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget backSpaceWidget(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: GestureDetector(
+        onTap: () {
+          passwordDataController.passwordInputData.clear();
+          passwordDataController.passwordResult.clear();
+          Navigator.of(context).pushReplacementNamed('/add');
+        },
+        child: const Icon(
+          Icons.arrow_back,
+          size: 30,
+        ),
+      ),
+    );
+  }
+
+  Widget titleWidget() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        passwordDataController.isPasswordCheck.value ? title : failTitle,
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: passwordDataController.isPasswordCheck.value
+              ? Colors.black
+              : Colors.red,
         ),
       ),
     );

@@ -9,6 +9,28 @@ class PasswordResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              '등록하신 비밀번호',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              passwordResultData.join(''),
+              style: TextStyle(fontSize: 24),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

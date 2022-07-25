@@ -14,43 +14,41 @@ class PasswordAddScreen extends StatefulWidget {
 }
 
 class _PasswordAddScreenState extends State<PasswordAddScreen> {
-  PasswordDataController passwordDataController =
-      Get.put(PasswordDataController());
+  PasswordDataController passwordDataController = Get.find();
 
-  List<int> numContainer = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  String title = '비밀번호를 입력해주세요.';
 
-  String passwordNum = '0123456789';
-  String keyValue = '';
-  String keyValueResult = '';
-
-  String title = '비밀번호를 등록해주세요.';
+  String num = '0123456789';
+  String randomValue = '';
+  String keyPadValue = '';
 
   @override
   void initState() {
-    // passwordDataController.passwordInputData.clear();
     initKeyPadNum();
+    listener();
     super.initState();
   }
 
-  void initKeyPadNum() {
-    for (int i = 0; keyValue.length < 10; i++) {
-      int rand = math.Random().nextInt(10);
-      // print('rand : $rand');
+  @override
+  void dispose() {
+    passwordDataController.passwordAddCancel();
+    super.dispose();
+  }
 
-      if (keyValue.contains(rand.toString())) continue;
-      keyValue += passwordNum.substring(rand, rand + 1);
-      // print(keyValue);
+  void listener() {
+    passwordDataController.setContext(context);
+    passwordDataController.passwordAddListener();
+  }
+
+  void initKeyPadNum() {
+    for (int i = 0; randomValue.length < 10; i++) {
+      int rand = math.Random().nextInt(10);
+
+      if (randomValue.contains(rand.toString())) continue;
+      randomValue += num.substring(rand, rand + 1);
     }
 
-    keyValueResult = '${keyValue.substring(0, 9)}@${keyValue.substring(9)}';
-    print('keyValueResult : $keyValueResult');
-
-    // int counter = -1;
-    // while (counter < 9) {
-    //   counter++;
-    //   // String password = keyValue[counter];
-    //   // print('password : ${keyValue[counter]}');
-    // }
+    keyPadValue = '${randomValue.substring(0, 9)}@${randomValue.substring(9)}';
   }
 
   @override
@@ -62,21 +60,15 @@ class _PasswordAddScreenState extends State<PasswordAddScreen> {
           child: Scaffold(
             backgroundColor: Colors.white,
             body: Padding(
-              padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
               child: Column(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                  const SizedBox(
+                    height: 50,
                   ),
-                  // Text('${keyValue}'),
-                  Center(
+                  titleWidget(),
+                  SizedBox(
+                    height: 0,
                     child: Text(
                         passwordDataController.passwordInputData.toString()),
                   ),
@@ -86,17 +78,25 @@ class _PasswordAddScreenState extends State<PasswordAddScreen> {
                   ),
                   KeyPadWidget(
                     passwordInputData: passwordDataController.passwordInputData,
-                    passwordResult: passwordDataController.passwordResult,
-                    keyValueResult: keyValueResult,
-                    routeName: '/confirm',
-                    // complete: () {
-                    //   passwordDataController.passwordInputData.clear();
-                    // },
+                    keyValue: keyPadValue,
                   ),
                 ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget titleWidget() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
